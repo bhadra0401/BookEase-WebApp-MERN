@@ -10,6 +10,7 @@ import reviewRoutes from './routes/reviews.js';
 import adminRoutes from './routes/admin.js';
 import cartRoutes from './routes/cart.js';
 import wishlistRoutes from './routes/wishlist.js';
+import User from './models/User.js';
 
 dotenv.config();
 
@@ -25,8 +26,18 @@ mongoose.connect('mongodb://localhost:27017/Book-Ease', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('Connected to local MongoDB at bookease'))
-.catch((err) => console.error('MongoDB connection error:', err));
+.then(async () => {
+  console.log('✅ Connected to local MongoDB at Book-Ease');
+
+  // 🔐 Create default demo admin after DB is connected
+  await createDemoAdmin();
+
+  // ✅ Start server only after DB + admin setup
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
+})
+.catch((err) => console.error('❌ MongoDB connection error:', err));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -42,7 +53,26 @@ app.get('/', (req, res) => {
   res.json({ message: 'BookEase API Server Running!' });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// 👇 Create demo admin function
+const createDemoAdmin = async () => {
+  try {
+    const existingAdmin = await User.findOne({ email: 'admin@bookease.com' });
+
+    if (!existingAdmin) {
+      const admin = new User({
+        name: 'Demo Admin',
+        email: 'admin@bookease.com',
+        password: 'admin123', // will be hashed
+        role: 'admin'
+      });
+
+      await admin.save();
+      console.log('✅ Demo admin created: admin@bookease.com / admin123');
+    } else {
+      console.log('✅ Demo admin already exists');
+    }
+  } catch (err) {
+    console.error('❌ Error creating demo admin:', err.message);
+  }
+};
+
