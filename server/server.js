@@ -75,4 +75,7 @@ const createDemoAdmin = async () => {
     console.error('❌ Error creating demo admin:', err.message);
   }
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 011f219 (Committing local changes before pulling)
