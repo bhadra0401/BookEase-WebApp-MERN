@@ -15,24 +15,29 @@ import User from './models/User.js';
 dotenv.config();
 
 const app = express();
+
+// 🔐 Load from .env
 const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI;
+const DEMO_ADMIN_EMAIL = process.env.DEMO_ADMIN_EMAIL || 'admin@bookease.com';
+const DEMO_ADMIN_PASSWORD = process.env.DEMO_ADMIN_PASSWORD || 'admin123';
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Connect to local MongoDB
-mongoose.connect('mongodb://localhost:27017/Book-Ease', {
+// Connect to MongoDB
+mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
 .then(async () => {
-  console.log('✅ Connected to local MongoDB at Book-Ease');
+  console.log(`✅ Connected to MongoDB: ${MONGO_URI}`);
 
-  // 🔐 Create default demo admin after DB is connected
+  // 🔐 Create demo admin
   await createDemoAdmin();
 
-  // ✅ Start server only after DB + admin setup
+  // Start server
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
   });
@@ -53,21 +58,21 @@ app.get('/', (req, res) => {
   res.json({ message: 'BookEase API Server Running!' });
 });
 
-// 👇 Create demo admin function
+// 👇 Create demo admin
 const createDemoAdmin = async () => {
   try {
-    const existingAdmin = await User.findOne({ email: 'admin@bookease.com' });
+    const existingAdmin = await User.findOne({ email: DEMO_ADMIN_EMAIL });
 
     if (!existingAdmin) {
       const admin = new User({
         name: 'Demo Admin',
-        email: 'admin@bookease.com',
-        password: 'admin123', // will be hashed
+        email: DEMO_ADMIN_EMAIL,
+        password: DEMO_ADMIN_PASSWORD, // should be hashed in model
         role: 'admin'
       });
 
       await admin.save();
-      console.log('✅ Demo admin created: admin@bookease.com / admin123');
+      console.log(`✅ Demo admin created: ${DEMO_ADMIN_EMAIL} / ${DEMO_ADMIN_PASSWORD}`);
     } else {
       console.log('✅ Demo admin already exists');
     }
@@ -75,7 +80,3 @@ const createDemoAdmin = async () => {
     console.error('❌ Error creating demo admin:', err.message);
   }
 };
-<<<<<<< HEAD
-
-=======
->>>>>>> 011f219 (Committing local changes before pulling)
