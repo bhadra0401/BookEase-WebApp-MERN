@@ -56,7 +56,7 @@ Choose one connection string in your `.env` file:
 
 ## 🔐 Backend Setup
 
-### 📁 Create `server/.env`
+### 📁 `server/.env`
 
 ```env
 # ✅ Local MongoDB - Active
@@ -77,27 +77,19 @@ DEMO_ADMIN_PASSWORD=admin123
 
 ---
 
-### 📦 Install & Run Backend
+### 📦 Install Node Modules in Backend
 
 ```bash
 cd server
 npm install
-npm start
 ```
 
-✅ The backend will run at: `http://localhost:5000`
-
-✅ A demo admin will be auto-created with:
-```
-Email: admin@bookease.com
-Password: admin123
-```
 
 ---
 
 ## 💻 Frontend Setup
 
-### 📁 Create `client/.env`
+### 📁 `src/.env`
 
 ```env
 # Development (local backend)
@@ -112,13 +104,20 @@ VITE_API_URL=http://localhost:5000/api
 ### 📦 Install & Run Frontend
 
 ```bash
-cd client
+cd..
+cd src
 npm install
 npm run dev
 ```
 
 ✅ The frontend will run at: `http://localhost:5173`
+✅ The backend will run at: `http://localhost:5000`
 
+✅ A demo admin will be auto-created with:
+```
+Email: admin@bookease.com
+Password: admin123
+```
 ---
 
 ## 👤 User Roles & Features
@@ -182,10 +181,10 @@ BookEase-WebApp-MERN/
 # Run Backend
 cd server
 npm install
-npm start
 
 # Run Frontend
-cd client
+cd..
+cd src
 npm install
 npm run dev
 ```
