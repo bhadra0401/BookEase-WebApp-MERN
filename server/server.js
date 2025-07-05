@@ -11,6 +11,7 @@ import adminRoutes from './routes/admin.js';
 import cartRoutes from './routes/cart.js';
 import wishlistRoutes from './routes/wishlist.js';
 import User from './models/User.js';
+import Book from './models/Book.js'; 
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ mongoose.connect(MONGO_URI, {
 
   // 🔐 Create demo admin
   await createDemoAdmin();
+  await createDemoBooks();
 
   // Start server
   app.listen(PORT, () => {
@@ -78,5 +80,76 @@ const createDemoAdmin = async () => {
     }
   } catch (err) {
     console.error('❌ Error creating demo admin:', err.message);
+  }
+};
+const createDemoBooks = async () => {
+  try {
+    const count = await Book.countDocuments();
+    if (count > 0) {
+      console.log('📚 Demo books already exist');
+      return;
+    }
+
+    // Get an existing seller (or admin) to assign as sellerId
+    const seller = await User.findOne({ role: 'seller' }) || await User.findOne({ role: 'admin' });
+    if (!seller) {
+      console.log('❌ No seller or admin found to assign demo books');
+      return;
+    }
+    const demoBooks = [
+      {
+        title: 'The Alchemist',
+        description: 'A boy’s mystical journey to follow his dream.',
+        author: 'Paulo Coelho',
+        price: 299,
+        originalPrice: 399,
+        stock: 25,
+        category: 'Fiction',
+        imageUrl: 'https://m.media-amazon.com/images/I/51Z0nLAfLmL.jpg',
+        sellerId: seller._id,
+        isbn: '9780061122415',
+        language: 'English',
+        pages: 208,
+        publisher: 'HarperOne',
+        publicationDate: new Date('1993-05-01')
+      },
+      {
+        title: 'Atomic Habits',
+        description: 'A proven system to build good habits and break bad ones.',
+        author: 'James Clear',
+        price: 350,
+        originalPrice: 499,
+        stock: 30,
+        category: 'Self-Help',
+        imageUrl: 'https://m.media-amazon.com/images/I/91bYsX41DVL.jpg',
+        sellerId: seller._id,
+        isbn: '9780735211292',
+        language: 'English',
+        pages: 320,
+        publisher: 'Avery',
+        publicationDate: new Date('2018-10-16')
+      },
+      {
+        title: 'Sapiens: A Brief History of Humankind',
+        description: 'An exploration of human evolution and history.',
+        author: 'Yuval Noah Harari',
+        price: 450,
+        originalPrice: 600,
+        stock: 15,
+        category: 'History',
+        imageUrl: 'https://m.media-amazon.com/images/I/713jIoMO3UL.jpg',
+        sellerId: seller._id,
+        isbn: '9780062316097',
+        language: 'English',
+        pages: 464,
+        publisher: 'Harper',
+        publicationDate: new Date('2015-02-10')
+      }
+    ];
+
+    await Book.insertMany(demoBooks);
+    console.log('📚 Demo books inserted successfully');
+  } catch (err) {
+    console.error('❌ Error inserting demo books:', err.message);
   }
 };
