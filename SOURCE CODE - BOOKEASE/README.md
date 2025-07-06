@@ -39,6 +39,7 @@ BookEase is a full-featured online bookstore built with the **MERN stack** (Mong
 ```bash
 git clone https://github.com/bhadra0401/BookEase-WebApp-MERN.git
 cd BookEase-WebApp-MERN
+cd SOURCE CODE - BOOKEASE
 ```
 
 ---
